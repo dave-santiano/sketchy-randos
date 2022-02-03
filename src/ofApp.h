@@ -2,6 +2,23 @@
 
 #include "ofMain.h"
 
+struct circleBoi{
+	glm::vec2 pos;
+	ofColor color;
+	int radius;
+	circleBoi(glm::vec2 pos, ofColor color, int radius) :
+		pos(pos),
+		color(color),
+		radius(radius)
+	{}
+
+	void draw() {
+		ofSetColor(color);
+		ofSetCircleResolution(64);
+		ofDrawEllipse(pos, radius, radius);
+	}
+};
+
 
 class ofApp : public ofBaseApp{
 	
@@ -21,8 +38,11 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
+		void infiniteCaterpillar(ofNode domNode, ofNode subNode, int counter);
+		int infinityCounter;
 		ofPolyline mainLine;
+		ofNode originAxis;
 		ofNode baseNode;
 		ofNode childNode;
 		ofNode grandChildNode;
@@ -31,4 +51,7 @@ class ofApp : public ofBaseApp{
 		ofBuffer camMatrix;
 		bool reverseDolly;
 		ofColor color;
+		bool flip;
+		
+		vector<circleBoi> circleBois;
 };

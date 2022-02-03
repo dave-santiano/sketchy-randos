@@ -2,104 +2,90 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
     ofEnableDepthTest();
+    originAxis.setGlobalPosition(0, 0, 0);
     baseNode.setPosition(0, 0, 0);
     childNode.setParent(baseNode);
-    childNode.setPosition(0, 0, 200);
-    grandChildNode.setParent(childNode);
-    grandChildNode.setPosition(0, 10, 0);
-    //cam.setParent(grandChildNode);
-    //cam.setAutoDistance(false);
-    cam.setFarClip(100000);
-    cam.setPosition(100, 100, 0);
-    reverseDolly = true;
-    color = ofColor(255, 0, 0);
+    childNode.setPosition(0, 0, 0);
 
+    
+    ofSetSphereResolution(64);
+    cam.setFarClip(10000);
+    cam.setGlobalPosition(20, 0, 0);
+    color = ofColor(255, 0, 0);
+    ofSetFrameRate(30);
+    flip = true;
+
+    float translationStep = 0;
+    for (size_t i = 0; i < 5000; i++) {
+        //circleBois.push_back(circleBoi(glm::vec2(ofGetWidth() / 2 + cos(i * 60) * 60 - translationStep, ofGetHeight() / 2 + sin(i * 60) * 60 - translationStep), ofColor(0,0,0), 20));
+        //circleBois.push_back(circleBoi(glm::vec2((ofGetWidth() / 2) + 100 - translationStep, (ofGetHeight() / 2) + 100 - translationStep), ofColor(0,0,0), 20));
+        circleBois.push_back(circleBoi(glm::vec2(ofGetWidth() / 2, ofGetHeight() / 2 + 200 - translationStep), ofColor(0,0,0), 20));
+        translationStep += 0.08;
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    //cam.setFarClip(sin(ofGetElapsedTimeMillis())/ 1000);
-    int tempCounter = 0;
-    // 
-    //if ((int)ofGetElapsedTimef() % 2 == 1) {
-    //    tempCounter++;
-    //    cam.rotateAroundDeg(tempCounter, glm::vec3(0, 1, 0), baseNode.getGlobalPosition());
-    //    cam.lookAt(baseNode);
-    //    if (reverseDolly == true) {
-    //        cam.dolly(tempCounter * 5);
-    //    }
-    //    if (reverseDolly == false) {
-    //        cam.dolly(tempCounter * 5 * -1);
-    //    }
-    //}
 
-    //if (reverseDolly == true) {
-    //    cam.dolly();
-    //}
-    //if (reverseDolly == false) {
-    //    cam.dolly( * -1);
-    //}
-    
-    if ((int)ofGetElapsedTimef() % 3 == 1) {
-        reverseDolly = !reverseDolly;
-    }
 
-    //baseNode.pan(.3f);
-    baseNode.pan(1);
-    baseNode.rotateDeg(20, glm::vec3(0, 1, 0));
-    cam.lookAt(baseNode);
-    cam.rotateAroundDeg(0.3, glm::vec3(0, 1, 0), baseNode.getGlobalPosition());
-    //cam.rotateAroundDeg(0.2, glm::vec3(1, 0, 0), baseNode.getGlobalPosition());
-    //baseNode.tilt(-1);
-    //childNode.tilt(1);
-    //childNode.pan(sin(ofGetElapsedTimef()));
-    childNode.move(6 * sin(ofGetElapsedTimef()) + 20, 0, 0);
-    childNode.move(0,  sin(ofGetElapsedTimef()) * 50, 0);
-    //childNode.pan(1); 
-    //childNode.rollDeg(1);
 
-    line.addVertex(childNode.getGlobalPosition());
 
-    if (line.size() > 10000) {
-        line.getVertices().erase(
-            line.getVertices().begin()
-        );
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+    //infinityCounter = 0;
     ofBackground(255);
-    ofSetColor(color);
-    cam.begin();
-
-    for (float i = 0; i < line.getVertices().size(); i++) {
-        color.setHueAngle((i / line.getVertices().size()) * 360);
-        //ofSetColor(color + ofGetElapsedTimef());
-        ofSetColor(255 * (i / line.getVertices().size()));
-        if (i == 0) {
-
-        }
-
-        line.getVertices()[i];
-        ofDrawSphere(line.getVertices()[i], 30 * log(i));
-
+    //cam.begin();
+    //ofSetColor(color);
+    //ofDrawSphere(baseNode.getGlobalPosition(), 8);
+    //ofSetColor(0, 125, 125);
+    //ofDrawSphere(baseNode.getGlobalPosition(), 6);
+    //cam.end();
+    //ofSetColor(255);
+    //ofDrawEllipse(ofGetWidth() - ofGetElapsedTimef() * 100, ofGetHeight()/2 + sin(ofGetElapsedTimef() * 10) * 100, 40, 40);
+    //ofDrawEllipse(
+    //    ofGetWidth() / 2 + cos(ofGetElapsedTimef()) * 60 - ofGetElapsedTimef() * 10, 
+    //    ofGetHeight()/2 + sin(ofGetElapsedTimef()) * 60 - ofGetElapsedTimef() * 10, 
+    //    40, 40);
+    if (flip) {
+        for (int i = 0; i < circleBois.size(); i++) {
+            circleBois[i].color = ofColor(((float)i / circleBois.size()) * 255);
+            circleBois[i].pos = circleBois[i].pos + glm::vec2(cos(ofGetElapsedTimef() * ofNoise(ofGetElapsedTimef() / 10) + i),sin(ofGetElapsedTimef() + i));
+            circleBois[i].draw();
+        }    
     }
-    ofSetColor(0);
-    //line.draw();
-    cam.end();
+    else {
+        for (int i = 0; i < circleBois.size(); i++) {
+            circleBois[i].color = ofColor(((float)i / circleBois.size()) * 255);
+            circleBois[i].pos = circleBois[i].pos + glm::vec2(cos(ofGetElapsedTimef() * ofNoise(ofGetElapsedTimef() / 10) + i),sin(ofGetElapsedTimef() * i));
+            circleBois[i].draw();
+        }
+    }
 }
+
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == 0) {
-        std::cout << cam.getGlobalTransformMatrix() << std::endl;
-    }
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    if (key == 'l') {
+        cam.lookAt(baseNode);
+    }
+    if (key == 'g') {
+        cam.setGlobalPosition(baseNode.getGlobalPosition());
+    }
+    if (key == 'c') {
+        cout << cam.getGlobalPosition() << endl;
+        cout << baseNode.getGlobalPosition() << endl;
+    }
+    if (key = 'f') {
+        flip = !flip;
+    }
 }
 
 //--------------------------------------------------------------
@@ -140,6 +126,20 @@ void ofApp::windowResized(int w, int h){
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
 
+}
+
+void ofApp::infiniteCaterpillar(ofNode domNode, ofNode subNode, int counter){
+    while (counter < 10) {
+        ofSetColor(255 * (counter / 10.0f), 125, 125);
+        domNode.setGlobalPosition(domNode.getGlobalPosition() + glm::vec3(0, abs(sin(ofGetElapsedTimef())) + 30, 0));
+        //subNode.setGlobalPosition(subNode.getGlobalPosition() + glm::vec3(0, 15 * abs(cos(ofGetElapsedTimef())) + 15, 0));
+
+        ofDrawSphere(domNode.getGlobalPosition(), exp(counter/(3.0f)));
+        //ofDrawSphere(domNode.getGlobalPosition(), counter);
+        //ofDrawSphere(subNode.getGlobalPosition(), 5 + (counter * 2));
+        counter++;
+        infiniteCaterpillar(domNode, subNode, counter);
+    }
 }
 
 //--------------------------------------------------------------
